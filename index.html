@@ -39,6 +39,9 @@ button:hover {
     color: gold;
     margin-bottom: 15px;
 }
+.ajudas button {
+    background: #003566;
+}
 </style>
 </head>
 <body>
@@ -49,6 +52,12 @@ button:hover {
     <div id="premio"></div>
     <h2 id="pergunta"></h2>
     <div id="opcoes"></div>
+
+    <div class="ajudas">
+        <button onclick="pular()">📞 Pular</button>
+        <button onclick="universitarios()">🧠 Universitários</button>
+        <button onclick="cartas()">🃏 Cartas</button>
+    </div>
 </div>
 
 <script>
@@ -61,37 +70,13 @@ const premios = [
 "R$ 1.000.000","R$ 1.000.000","R$ 1.000.000","R$ 1.000.000","R$ 1.000.000","R$ 1.000.000"
 ];
 
-let perguntasOriginais = [
-{pergunta:"Quem construiu a arca?", opcoes:["Moisés","Abraão","Noé","Davi"], correta:2},
-{pergunta:"Quem foi lançado na cova dos leões?", opcoes:["José","Daniel","Paulo","Elias"], correta:1},
-{pergunta:"Quantos discípulos Jesus escolheu?", opcoes:["7","10","12","15"], correta:2},
-{pergunta:"Quem enfrentou Golias?", opcoes:["Saul","Davi","Samuel","Josué"], correta:1},
-{pergunta:"Quem liderou o povo na saída do Egito?", opcoes:["Abraão","Moisés","Josué","Noé"], correta:1},
-{pergunta:"Quem foi engolido por um grande peixe?", opcoes:["Jonas","Pedro","Tiago","Isaías"], correta:0},
-{pergunta:"Quem negou Jesus três vezes?", opcoes:["Pedro","João","Tiago","Paulo"], correta:0},
-{pergunta:"Quem escreveu muitos Salmos?", opcoes:["Davi","Moisés","Isaías","Elias"], correta:0},
-{pergunta:"Qual o primeiro livro da Bíblia?", opcoes:["Êxodo","Gênesis","Levítico","Números"], correta:1},
-{pergunta:"Quem traiu Jesus?", opcoes:["Pedro","Judas","Tomé","Mateus"], correta:1},
-{pergunta:"Onde Jesus nasceu?", opcoes:["Jerusalém","Belém","Nazaré","Roma"], correta:1},
-{pergunta:"Quem construiu o templo?", opcoes:["Davi","Salomão","Saul","Samuel"], correta:1},
-{pergunta:"Quem era o pai de Isaque?", opcoes:["Abraão","Jacó","José","Noé"], correta:0},
-{pergunta:"Quem abriu o Mar Vermelho?", opcoes:["Moisés","Josué","Elias","Abraão"], correta:0},
-{pergunta:"Quem foi o homem mais forte da Bíblia?", opcoes:["Sansão","Davi","Saul","Josué"], correta:0},
-{pergunta:"Quem interpretou sonhos no Egito?", opcoes:["José","Daniel","Elias","Paulo"], correta:0},
-{pergunta:"Qual apóstolo duvidou da ressurreição?", opcoes:["Tomé","Pedro","Tiago","André"], correta:0},
-{pergunta:"Quem foi a mãe de Jesus?", opcoes:["Maria","Marta","Rute","Ana"], correta:0},
-{pergunta:"Quem escreveu Apocalipse?", opcoes:["Paulo","João","Pedro","Lucas"], correta:1},
-{pergunta:"Quem subiu ao céu em um redemoinho?", opcoes:["Elias","Eliseu","Isaías","Jeremias"], correta:0},
-{pergunta:"Quem foi o primeiro rei de Israel?", opcoes:["Davi","Saul","Salomão","Samuel"], correta:1},
-{pergunta:"Qual discípulo era cobrador de impostos?", opcoes:["Mateus","Pedro","João","Tiago"], correta:0},
-{pergunta:"Quem era o gigante derrotado por Davi?", opcoes:["Golias","Saul","Faraó","Absalão"], correta:0},
-{pergunta:"Qual livro fala sobre a criação?", opcoes:["Êxodo","Gênesis","Salmos","Provérbios"], correta:1},
-{pergunta:"Quem foi vendido pelos irmãos?", opcoes:["José","Davi","Isaac","Noé"], correta:0},
-{pergunta:"Quem recebeu os Dez Mandamentos?", opcoes:["Moisés","Abraão","Elias","Samuel"], correta:0}
-];
+let perguntasOriginais = [...]; // MANTENHA SUAS 26 PERGUNTAS AQUI
 
 let perguntas = [];
 let indice = 0;
+let ajudaPular = false;
+let ajudaUniversitarios = false;
+let ajudaCartas = false;
 
 function embaralhar(array){
     return array.sort(()=>Math.random()-0.5);
@@ -100,6 +85,9 @@ function embaralhar(array){
 function iniciarJogo(){
     perguntas = embaralhar([...perguntasOriginais]);
     indice = 0;
+    ajudaPular = false;
+    ajudaUniversitarios = false;
+    ajudaCartas = false;
     carregarPergunta();
 }
 
@@ -119,6 +107,7 @@ function carregarPergunta(){
     perguntas[indice].opcoes.forEach((opcao,i)=>{
         const btn = document.createElement("button");
         btn.innerText = opcao;
+        btn.id = "opcao"+i;
         btn.onclick = ()=> verificar(i);
         opcoesDiv.appendChild(btn);
     });
@@ -132,6 +121,44 @@ function verificar(resposta){
         document.querySelector(".container").innerHTML =
         "<h2>💥 Resposta errada!</h2><p>Nova tentativa iniciando...</p>";
         setTimeout(iniciarJogo,2000);
+    }
+}
+
+function pular(){
+    if(!ajudaPular){
+        ajudaPular = true;
+        indice++;
+        carregarPergunta();
+    } else {
+        alert("Você já usou o Pular!");
+    }
+}
+
+function universitarios(){
+    if(!ajudaUniversitarios){
+        ajudaUniversitarios = true;
+        alert("A maioria acredita que é: " + perguntas[indice].opcoes[perguntas[indice].correta]);
+    } else {
+        alert("Você já usou essa ajuda!");
+    }
+}
+
+function cartas(){
+    if(!ajudaCartas){
+        ajudaCartas = true;
+
+        let erradas = perguntas[indice].opcoes
+        .map((_,i)=>i)
+        .filter(i=>i !== perguntas[indice].correta);
+
+        erradas = embaralhar(erradas).slice(0,2);
+
+        erradas.forEach(i=>{
+            document.getElementById("opcao"+i).style.display="none";
+        });
+
+    } else {
+        alert("Você já usou as Cartas!");
     }
 }
 
