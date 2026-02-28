@@ -1,169 +1,89 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta charset="UTF-8">
-<title>Show do Milhão Bíblico</title>
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: radial-gradient(circle, #001f4d, #000814);
-    color: white;
-    text-align: center;
-    padding: 20px;
-}
-.container {
-    max-width: 750px;
-    margin: auto;
-    background: #012a4a;
-    padding: 25px;
-    border-radius: 15px;
-    box-shadow: 0 0 25px gold;
-}
-h1 { color: gold; }
-button {
-    display: block;
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-}
-button:hover {
-    background: gold;
-    color: black;
-}
-#premio {
-    font-size: 20px;
-    color: gold;
-    margin-bottom: 15px;
-}
-.ajudas button {
-    background: #003566;
-}
-</style>
-</head>
-<body>
+import random
 
-<h1>🎤 Show do Milhão Bíblico</h1>
-
-<div class="container">
-    <div id="premio"></div>
-    <h2 id="pergunta"></h2>
-    <div id="opcoes"></div>
-
-    <div class="ajudas">
-        <button onclick="pular()">📞 Pular</button>
-        <button onclick="universitarios()">🧠 Universitários</button>
-        <button onclick="cartas()">🃏 Cartas</button>
-    </div>
-</div>
-
-<script>
-
-const premios = [
-"R$ 1.000","R$ 2.000","R$ 3.000","R$ 5.000","R$ 10.000",
-"R$ 20.000","R$ 30.000","R$ 40.000","R$ 50.000","R$ 75.000",
-"R$ 100.000","R$ 150.000","R$ 200.000","R$ 300.000","R$ 400.000",
-"R$ 500.000","R$ 600.000","R$ 700.000","R$ 800.000","R$ 900.000",
-"R$ 1.000.000","R$ 1.000.000","R$ 1.000.000","R$ 1.000.000","R$ 1.000.000","R$ 1.000.000"
-];
-
-let perguntasOriginais = [...]; // MANTENHA SUAS 26 PERGUNTAS AQUI
-
-let perguntas = [];
-let indice = 0;
-let ajudaPular = false;
-let ajudaUniversitarios = false;
-let ajudaCartas = false;
-
-function embaralhar(array){
-    return array.sort(()=>Math.random()-0.5);
-}
-
-function iniciarJogo(){
-    perguntas = embaralhar([...perguntasOriginais]);
-    indice = 0;
-    ajudaPular = false;
-    ajudaUniversitarios = false;
-    ajudaCartas = false;
-    carregarPergunta();
-}
-
-function carregarPergunta(){
-    if(indice >= 26){
-        document.querySelector(".container").innerHTML =
-        "<h2>🎉 PARABÉNS!</h2><p>Você conquistou R$ 1.000.000!</p><button onclick='iniciarJogo()'>Jogar Novamente</button>";
-        return;
+def jogar_show_do_milhao():
+    # Estrutura de Perguntas (Nível: Fácil, Médio, Difícil)
+    perguntas = {
+        "facil": [
+            {"pergunta": "Quem construiu a arca?", "opcoes": ["A) Moisés", "B) Noé", "C) Davi", "D) Sansão"], "correta": "B"},
+            {"pergunta": "Qual o primeiro livro da Bíblia?", "opcoes": ["A) Êxodo", "B) Salmos", "C) Gênesis", "D) Mateus"], "correta": "C"},
+        ],
+        "medio": [
+            {"pergunta": "Qual o nome do mar que Moisés abriu?", "opcoes": ["A) Mar Morto", "B) Mar da Galileia", "C) Mar Vermelho", "D) Mar Mediterrâneo"], "correta": "C"},
+        ],
+        "dificil": [
+            {"pergunta": "Qual era a profissão de Amós?", "opcoes": ["A) Pescador", "B) Cultivador de sicômoros", "C) Coletor de impostos", "D) Carpinteiro"], "correta": "B"},
+        ]
     }
 
-    document.getElementById("premio").innerText = "Valendo: " + premios[indice];
-    document.getElementById("pergunta").innerText = perguntas[indice].pergunta;
+    premios = [1000, 2000, 3000, 4000, 5000, 10000, 20000, 40000, 80000, 150000, 300000, 500000, 1000000]
+    pulos = 3
+    ajuda_universitarios = 1
+    ajuda_cartas = 1
+    
+    nivel_atual = 0
+    print("--- BEM-VINDO AO SHOW DO MILHÃO BÍBLICO ---")
 
-    const opcoesDiv = document.getElementById("opcoes");
-    opcoesDiv.innerHTML = "";
+    while nivel_atual < len(premios):
+        # Define a dificuldade com base no progresso
+        if nivel_atual < 4: diff = "facil"
+        elif nivel_atual < 8: diff = "medio"
+        else: diff = "dificil"
 
-    perguntas[indice].opcoes.forEach((opcao,i)=>{
-        const btn = document.createElement("button");
-        btn.innerText = opcao;
-        btn.id = "opcao"+i;
-        btn.onclick = ()=> verificar(i);
-        opcoesDiv.appendChild(btn);
-    });
-}
+        quest = random.choice(perguntas[diff])
+        print(f"\nPergunta valendo R$ {premios[nivel_atual]}")
+        print(quest["pergunta"])
+        for opt in quest["opcoes"]: print(opt)
 
-function verificar(resposta){
-    if(resposta === perguntas[indice].correta){
-        indice++;
-        carregarPergunta();
-    }else{
-        document.querySelector(".container").innerHTML =
-        "<h2>💥 Resposta errada!</h2><p>Nova tentativa iniciando...</p>";
-        setTimeout(iniciarJogo,2000);
-    }
-}
+        print(f"\n[AJUDAS DISPONÍVEIS: Pulos: {pulos} | Universitários: {ajuda_universitarios} | Cartas: {ajuda_cartas}]")
+        escolha = input("Sua resposta (ou digite 'pular', 'universitarios', 'cartas'): ").upper()
 
-function pular(){
-    if(!ajudaPular){
-        ajudaPular = true;
-        indice++;
-        carregarPergunta();
-    } else {
-        alert("Você já usou o Pular!");
-    }
-}
+        # Lógica de Pular
+        if escolha == "PULAR":
+            if pulos > 0:
+                pulos -= 1
+                print("Você pulou a pergunta!")
+                continue
+            else:
+                print("Você não tem mais pulos!")
+                continue
 
-function universitarios(){
-    if(!ajudaUniversitarios){
-        ajudaUniversitarios = true;
-        alert("A maioria acredita que é: " + perguntas[indice].opcoes[perguntas[indice].correta]);
-    } else {
-        alert("Você já usou essa ajuda!");
-    }
-}
+        # Lógica de Universitários (Dão a resposta certa 70% das vezes)
+        if escolha == "UNIVERSITARIOS":
+            if ajuda_universitarios > 0:
+                ajuda_universitarios -= 1
+                chance = random.random()
+                dica = quest["correta"] if chance < 0.8 else random.choice(["A", "B", "C", "D"])
+                print(f"Os universitários acham que a resposta é: {dica}")
+                escolha = input("Sua resposta final: ").upper()
+            else:
+                print("Ajuda já utilizada!")
+                continue
 
-function cartas(){
-    if(!ajudaCartas){
-        ajudaCartas = true;
+        # Lógica das Cartas (Elimina opções falsas)
+        if escolha == "CARTAS":
+            if ajuda_cartas > 0:
+                ajuda_cartas -= 1
+                cartas = [0, 1, 2, 3] # Representando o Rei, Ás, 2 e 3
+                escolhida = random.choice(cartas)
+                print(f"Você tirou a carta {escolhida}. Eliminando {escolhida} alternativa(s) incorreta(s)...")
+                # Lógica simplificada: remove opções que não são a correta
+                opcoes_falsas = [opt[0] for opt in quest["opcoes"] if opt[0] != quest["correta"]]
+                eliminadas = random.sample(opcoes_falsas, min(escolhida, len(opcoes_falsas)))
+                print(f"Alternativas eliminadas: {eliminadas}")
+                escolha = input("Sua resposta final: ").upper()
+            else:
+                print("Ajuda já utilizada!")
+                continue
 
-        let erradas = perguntas[indice].opcoes
-        .map((_,i)=>i)
-        .filter(i=>i !== perguntas[indice].correta);
+        # Verificação da Resposta
+        if escolha == quest["correta"]:
+            print(f"ACERTOU! Você tem R$ {premios[nivel_atual]}")
+            nivel_atual += 1
+        else:
+            print(f"ERROU! A resposta era {quest['correta']}. Fim de jogo.")
+            break
 
-        erradas = embaralhar(erradas).slice(0,2);
+    if nivel_atual == len(premios):
+        print("PARABÉNS! VOCÊ É O NOVO MILIONÁRIO!")
 
-        erradas.forEach(i=>{
-            document.getElementById("opcao"+i).style.display="none";
-        });
-
-    } else {
-        alert("Você já usou as Cartas!");
-    }
-}
-
-iniciarJogo();
-
-</script>
-</body>
-</html>
+jogar_show_do_milhao()
